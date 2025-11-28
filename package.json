@@ -1,0 +1,15 @@
+{
+  "name": "my-travel-deals-spa",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter client dev",
+    "build": "pnpm --filter client build",
+    "lint": "pnpm --filter client lint",
+    "preview": "pnpm --filter client preview",
+    "api:dev": "pnpm --filter api dev",
+    "api:deploy": "pnpm --filter api deploy"
+  },
+  "devDependencies": {
+    "pnpm": "^10.23.0"
+  }
+}
