@@ -34,3 +34,11 @@ export const DEAL_TYPES = [
   { value: 'hotel', label: 'Hotel Only' },
   { value: 'all-inclusive', label: 'All-Inclusive' },
 ];
+
+export interface SavedSearch {
+  id: string;
+  name: string;
+  filters: FilterState;
+  createdAt: string;
+  lastUsed?: string;
+}

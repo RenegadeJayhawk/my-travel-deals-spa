@@ -356,3 +356,31 @@
     font-size: 1.125rem;
   }
 }
+
+/* Saved Searches Section */
+.saved-searches-section {
+  margin-bottom: 2rem;
+}
+
+/* Deals Controls Updates */
+.deals-controls-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .deals-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .deals-controls-left {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .deals-controls-left button {
+    width: 100%;
+  }
+}
