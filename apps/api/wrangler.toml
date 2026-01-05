@@ -6,4 +6,4 @@ compatibility_date = "2024-04-05"
 [[d1_databases]]
 binding = "DB"
 database_name = "travel-deals-db"
-database_id = "" # Will be set after creating the database
+database_id = "2c2a6097-4657-4847-bde8-532fb19aef7c"
