@@ -14,10 +14,25 @@ export const AlertNotifications: React.FC<AlertNotificationsProps> = ({
 
   useEffect(() => {
     loadNotifications();
+    
+    // Poll for new notifications every 5 seconds
+    const interval = setInterval(() => {
+      loadNotifications();
+    }, 5000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadNotifications = () => {
     const allNotifications = PriceAlertsService.getAllNotifications();
+    const previousUnreadCount = notifications.filter(n => !n.isRead).length;
+    const newUnreadCount = allNotifications.filter(n => !n.isRead).length;
+    
+    // Auto-expand if new unread notifications appear
+    if (newUnreadCount > previousUnreadCount && newUnreadCount > 0) {
+      setIsExpanded(true);
+    }
+    
     setNotifications(allNotifications);
   };
 

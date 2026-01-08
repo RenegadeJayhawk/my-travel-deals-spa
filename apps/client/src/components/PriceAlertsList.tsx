@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PriceAlert } from '../types/alerts';
 import { PriceAlertsService } from '../services/priceAlerts';
 
@@ -10,9 +10,17 @@ export const PriceAlertsList: React.FC<PriceAlertsListProps> = ({ onRefresh }) =
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     loadAlerts();
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (deleteTimeoutRef.current) {
+        clearTimeout(deleteTimeoutRef.current);
+      }
+    };
   }, []);
 
   const loadAlerts = () => {
@@ -28,13 +36,23 @@ export const PriceAlertsList: React.FC<PriceAlertsListProps> = ({ onRefresh }) =
 
   const handleDelete = (id: string) => {
     if (deleteConfirm === id) {
+      // Second click - confirm deletion
+      if (deleteTimeoutRef.current) {
+        clearTimeout(deleteTimeoutRef.current);
+        deleteTimeoutRef.current = null;
+      }
       PriceAlertsService.delete(id);
       loadAlerts();
       setDeleteConfirm(null);
     } else {
+      // First click - enter confirmation mode
+      if (deleteTimeoutRef.current) {
+        clearTimeout(deleteTimeoutRef.current);
+      }
       setDeleteConfirm(id);
-      setTimeout(() => {
+      deleteTimeoutRef.current = setTimeout(() => {
         setDeleteConfirm(null);
+        deleteTimeoutRef.current = null;
       }, 3000);
     }
   };
