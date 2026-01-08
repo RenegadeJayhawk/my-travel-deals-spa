@@ -3,6 +3,7 @@ import { dealsApi, ApiError } from '../services/api';
 import type { TravelDeal } from '../types/deals';
 import type { FilterState } from '../types/filters';
 import { DealCard } from './DealCard';
+import { AlertCheckerService } from '../services/alertChecker';
 
 interface DealsGridProps {
   filters: FilterState;
@@ -57,6 +58,11 @@ export function DealsGrid({ filters }: DealsGridProps) {
         });
 
         setDeals(filteredDeals);
+        
+        // Check deals against active price alerts
+        if (filteredDeals.length > 0) {
+          AlertCheckerService.checkAlerts(filteredDeals);
+        }
       } catch (err) {
         if (err instanceof ApiError) {
           setError(err.message);

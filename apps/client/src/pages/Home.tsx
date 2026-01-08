@@ -5,13 +5,18 @@ import { FilterPanel } from '../components/FilterPanel';
 import { SortDropdown } from '../components/SortDropdown';
 import { SaveSearchModal } from '../components/SaveSearchModal';
 import { SavedSearchesList } from '../components/SavedSearchesList';
+import { CreateAlertModal } from '../components/CreateAlertModal';
+import { PriceAlertsList } from '../components/PriceAlertsList';
+import { AlertNotifications } from '../components/AlertNotifications';
 import { FilterState, DEFAULT_FILTERS } from '../types/filters';
 
 export default function Home() {
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [alertsRefreshKey, setAlertsRefreshKey] = useState(0);
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
@@ -30,6 +35,10 @@ export default function Home() {
     setRefreshKey(prev => prev + 1); // Trigger refresh of saved searches list
   };
 
+  const handleAlertCreated = () => {
+    setAlertsRefreshKey(prev => prev + 1); // Trigger refresh of alerts list
+  };
+
   return (
     <div className="page-container">
       <div className="hero-section">
@@ -46,12 +55,18 @@ export default function Home() {
         />
       </div>
 
+      <AlertNotifications />
+
       <div className="saved-searches-section">
         <SavedSearchesList
           key={refreshKey}
           onLoadSearch={handleLoadSearch}
           currentFilters={filters}
         />
+      </div>
+
+      <div className="price-alerts-section">
+        <PriceAlertsList key={alertsRefreshKey} />
       </div>
 
       <div className="deals-section">
@@ -68,6 +83,12 @@ export default function Home() {
               onClick={() => setShowSaveModal(true)}
             >
               💾 Save Search
+            </button>
+            <button
+              className="create-alert-btn"
+              onClick={() => setShowAlertModal(true)}
+            >
+              🔔 Create Alert
             </button>
           </div>
           <SortDropdown
@@ -97,6 +118,13 @@ export default function Home() {
         onClose={() => setShowSaveModal(false)}
         currentFilters={filters}
         onSaved={handleSaveComplete}
+      />
+
+      <CreateAlertModal
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        onCreated={handleAlertCreated}
+        initialDestination={filters.destination}
       />
     </div>
   );

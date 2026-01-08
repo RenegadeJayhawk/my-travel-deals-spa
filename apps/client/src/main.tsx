@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary.tsx'
 import './styles/deals.css'
 import './styles/filters.css'
 import './styles/savedSearches.css'
+import './styles/priceAlerts.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
