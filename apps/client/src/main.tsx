@@ -6,6 +6,7 @@ import './styles/deals.css'
 import './styles/filters.css'
 import './styles/savedSearches.css'
 import './styles/priceAlerts.css'
+import './styles/savedDeals.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

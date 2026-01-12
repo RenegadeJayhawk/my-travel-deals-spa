@@ -1,0 +1,233 @@
+/* Saved Deals Page */
+.saved-deals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.saved-deals-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+.saved-deals-subtitle {
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.clear-all-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.clear-all-button:hover {
+  background: #c82333;
+}
+
+/* Expired Warning Banner */
+.expired-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.expired-warning-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+}
+
+.expired-warning-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.expired-warning-content strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #856404;
+}
+
+.expired-warning-content p {
+  margin: 0;
+  color: #856404;
+  font-size: 0.95rem;
+}
+
+.expired-warning-button {
+  background: #ffc107;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.expired-warning-button:hover {
+  background: #e0a800;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+.empty-state p {
+  font-size: 1.125rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.empty-state-button {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.empty-state-button:hover {
+  background: #0056b3;
+}
+
+/* Saved Deals Grid */
+.saved-deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.saved-deal-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Saved Deal Meta */
+.saved-deal-meta {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.saved-deal-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.saved-deal-time {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.saved-deal-expired {
+  font-size: 0.875rem;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.saved-deal-notes {
+  font-size: 0.875rem;
+  color: #495057;
+  line-height: 1.5;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.saved-deal-notes strong {
+  color: #212529;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.125rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .saved-deals-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .saved-deals-header h1 {
+    font-size: 2rem;
+  }
+
+  .clear-all-button {
+    width: 100%;
+  }
+
+  .expired-warning {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .expired-warning-button {
+    width: 100%;
+  }
+
+  .saved-deals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-state {
+    padding: 3rem 1rem;
+  }
+
+  .empty-state-icon {
+    font-size: 3rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+  }
+}

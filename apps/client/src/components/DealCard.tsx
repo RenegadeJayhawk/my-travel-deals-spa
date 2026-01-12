@@ -1,13 +1,35 @@
+import { useState, useEffect } from 'react';
 import type { TravelDeal } from '../types/deals';
+import { SavedDealsService } from '../services/savedDeals';
 
 interface DealCardProps {
   deal: TravelDeal;
 }
 
 export function DealCard({ deal }: DealCardProps) {
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    setIsSaved(SavedDealsService.isSaved(deal.id));
+  }, [deal.id]);
+
   const savings = deal.originalPrice
     ? Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100)
     : 0;
+
+  const handleSaveToggle = () => {
+    try {
+      if (isSaved) {
+        SavedDealsService.unsave(deal.id);
+        setIsSaved(false);
+      } else {
+        SavedDealsService.save(deal);
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error toggling save:', error);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -30,8 +52,18 @@ export function DealCard({ deal }: DealCardProps) {
       
       <div className="deal-card-content">
         <div className="deal-card-header">
-          <h3 className="deal-card-title">{deal.title}</h3>
-          <div className="deal-card-type">{deal.dealType}</div>
+          <div className="deal-card-header-left">
+            <h3 className="deal-card-title">{deal.title}</h3>
+            <div className="deal-card-type">{deal.dealType}</div>
+          </div>
+          <button
+            className={`deal-card-save-button ${isSaved ? 'saved' : ''}`}
+            onClick={handleSaveToggle}
+            title={isSaved ? 'Unsave deal' : 'Save deal'}
+            aria-label={isSaved ? 'Unsave deal' : 'Save deal'}
+          >
+            {isSaved ? '❤️' : '🤍'}
+          </button>
         </div>
 
         <div className="deal-card-destination">

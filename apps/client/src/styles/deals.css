@@ -384,3 +384,40 @@
     width: 100%;
   }
 }
+
+/* Deal Card Save Button */
+.deal-card-header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.deal-card-save-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.deal-card-save-button:hover {
+  transform: scale(1.2);
+}
+
+.deal-card-save-button:active {
+  transform: scale(0.9);
+}
+
+.deal-card-save-button.saved {
+  animation: heartbeat 0.3s ease-in-out;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+}
