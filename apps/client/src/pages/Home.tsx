@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DealsGrid } from '../components/DealsGrid';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
@@ -9,17 +10,46 @@ import { CreateAlertModal } from '../components/CreateAlertModal';
 import { PriceAlertsList } from '../components/PriceAlertsList';
 import { AlertNotifications } from '../components/AlertNotifications';
 import { FilterState, DEFAULT_FILTERS } from '../types/filters';
+import { filtersToUrlParams, urlParamsToFilters, hasActiveFilters } from '../utils/urlState';
 
 export default function Home() {
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState<FilterState>(() => {
+    // Initialize filters from URL on first load
+    return urlParamsToFilters(searchParams);
+  });
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [alertsRefreshKey, setAlertsRefreshKey] = useState(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Sync filters to URL whenever they change (after initial load)
+  useEffect(() => {
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+      return;
+    }
+
+    const params = filtersToUrlParams(filters);
+    setSearchParams(params, { replace: true });
+  }, [filters, isInitialLoad, setSearchParams]);
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
+  };
+
+  const handleShareUrl = async () => {
+    try {
+      const params = filtersToUrlParams(filters);
+      const url = `${window.location.origin}${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      await navigator.clipboard.writeText(url);
+      alert('Search URL copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy URL:', error);
+      alert('Failed to copy URL to clipboard');
+    }
   };
 
   const handleReset = () => {
@@ -90,6 +120,15 @@ export default function Home() {
             >
               🔔 Create Alert
             </button>
+            {hasActiveFilters(filters) && (
+              <button
+                className="share-url-btn"
+                onClick={handleShareUrl}
+                title="Copy shareable URL"
+              >
+                🔗 Share
+              </button>
+            )}
           </div>
           <SortDropdown
             value={filters.sortBy}
