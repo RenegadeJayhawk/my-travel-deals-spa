@@ -21,11 +21,6 @@ describe('SavedSearchesList Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   const createMockSavedSearch = (overrides?: Partial<SavedSearch>): SavedSearch => ({
@@ -76,7 +71,9 @@ describe('SavedSearchesList Component', () => {
         />
       );
 
-      expect(screen.queryByText(/saved searches/i)).not.toBeInTheDocument();
+      // Should show empty state message instead of header
+      expect(screen.queryByRole('heading', { name: /saved searches/i })).not.toBeInTheDocument();
+      expect(screen.getByText(/no saved searches yet/i)).toBeInTheDocument();
     });
   });
 
@@ -590,10 +587,10 @@ describe('SavedSearchesList Component', () => {
       );
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       await user.click(deleteButton);
 
-      expect(screen.getByText(/confirm\?/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /confirm\?/i })).toBeInTheDocument();
     });
 
     it('should delete search when confirmed', async () => {
@@ -609,10 +606,10 @@ describe('SavedSearchesList Component', () => {
       );
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       await user.click(deleteButton);
       
-      const confirmButton = screen.getByRole('button', { name: /click again to confirm/i });
+      const confirmButton = screen.getByRole('button', { name: /confirm\?/i });
       await user.click(confirmButton);
 
       expect(SavedSearchesService.delete).toHaveBeenCalledWith('search-123');
@@ -631,10 +628,10 @@ describe('SavedSearchesList Component', () => {
       );
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       await user.click(deleteButton);
       
-      const confirmButton = screen.getByRole('button', { name: /click again to confirm/i });
+      const confirmButton = screen.getByRole('button', { name: /confirm\?/i });
       await user.click(confirmButton);
 
       expect(SavedSearchesService.getAll).toHaveBeenCalledTimes(2); // Initial + after delete
@@ -653,17 +650,18 @@ describe('SavedSearchesList Component', () => {
       );
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       await user.click(deleteButton);
 
-      expect(screen.getByText(/confirm\?/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /confirm\?/i })).toBeInTheDocument();
 
-      // Fast-forward time by 3 seconds
-      vi.advanceTimersByTime(3000);
-
-      await waitFor(() => {
-        expect(screen.queryByText(/confirm\?/i)).not.toBeInTheDocument();
-      });
+      // Wait for auto-cancel after 3 seconds
+      await waitFor(
+        () => {
+          expect(screen.queryByRole('button', { name: /confirm\?/i })).not.toBeInTheDocument();
+        },
+        { timeout: 4000 } // Wait up to 4 seconds for the 3-second timeout
+      );
     });
 
     it('should not delete if confirmation times out', async () => {
@@ -679,11 +677,18 @@ describe('SavedSearchesList Component', () => {
       );
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       await user.click(deleteButton);
 
-      vi.advanceTimersByTime(3000);
+      // Wait for the timeout to occur
+      await waitFor(
+        () => {
+          expect(screen.queryByRole('button', { name: /confirm\?/i })).not.toBeInTheDocument();
+        },
+        { timeout: 4000 }
+      );
 
+      // Verify delete was not called during the timeout
       expect(SavedSearchesService.delete).not.toHaveBeenCalled();
     });
   });
@@ -755,7 +760,7 @@ describe('SavedSearchesList Component', () => {
 
       await user.click(screen.getByRole('button', { name: /expand/i }));
 
-      const deleteButton = screen.getByRole('button', { name: /delete this search/i });
+      const deleteButton = screen.getByRole('button', { name: /^delete$/i });
       expect(deleteButton).toHaveAttribute('title', 'Delete this search');
     });
   });
