@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PriceAlertsService } from '../priceAlerts';
-import { PriceAlert } from '../../types/alerts';
+// PriceAlert import removed
 
 describe('PriceAlertsService', () => {
   // Clear localStorage before each test
@@ -54,9 +54,9 @@ describe('PriceAlertsService', () => {
     });
 
     it('should return all alerts sorted by creation date (newest first)', () => {
-      const alert1 = PriceAlertsService.create('Paris', 1000);
-      const alert2 = PriceAlertsService.create('Tokyo', 1500);
-      const alert3 = PriceAlertsService.create('London', 1200);
+      PriceAlertsService.create('Paris', 1000);
+      PriceAlertsService.create('Tokyo', 2000);
+      PriceAlertsService.create('London', 1500);
 
       const alerts = PriceAlertsService.getAll();
 

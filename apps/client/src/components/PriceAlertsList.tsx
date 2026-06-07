@@ -10,7 +10,7 @@ export const PriceAlertsList: React.FC<PriceAlertsListProps> = ({ onRefresh }) =
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const deleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     loadAlerts();

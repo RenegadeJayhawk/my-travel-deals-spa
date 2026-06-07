@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import SavedDeals from './pages/SavedDeals'
+import Compare from './pages/Compare'
 import { SavedDealsService } from './services/savedDeals'
+import { CompareProvider } from './context/CompareContext'
+import { CompareBar } from './components/CompareBar'
+import './styles/compare.css'
 
 function Navigation() {
   const [savedCount, setSavedCount] = useState(0);
@@ -58,18 +62,23 @@ function Navigation() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <div style={{ fontFamily: 'system-ui, sans-serif' }}>
-        <Navigation />
+    <CompareProvider>
+      <BrowserRouter>
+        <div style={{ fontFamily: 'system-ui, sans-serif', paddingBottom: '80px' }}>
+          <Navigation />
 
-        <main style={{ padding: '2rem' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/saved" element={<SavedDeals />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+          <main style={{ padding: '2rem' }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/saved" element={<SavedDeals />} />
+              <Route path="/compare" element={<Compare />} />
+            </Routes>
+          </main>
+          
+          <CompareBar />
+        </div>
+      </BrowserRouter>
+    </CompareProvider>
   )
 }
 

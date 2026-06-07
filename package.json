@@ -6,6 +6,7 @@
     "build": "pnpm --filter client build",
     "lint": "pnpm --filter client lint",
     "preview": "pnpm --filter client preview",
+    "test": "pnpm --filter client test",
     "api:dev": "pnpm --filter api dev",
     "api:deploy": "pnpm --filter api deploy"
   },

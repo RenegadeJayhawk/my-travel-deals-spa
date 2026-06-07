@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterState, DEFAULT_FILTERS, DEAL_TYPES } from '../types/filters';
+import { FilterState, DEAL_TYPES } from '../types/filters';
 
 interface FilterPanelProps {
   filters: FilterState;

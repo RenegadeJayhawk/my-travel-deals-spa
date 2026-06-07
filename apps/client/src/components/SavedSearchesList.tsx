@@ -9,7 +9,6 @@ interface SavedSearchesListProps {
 
 export const SavedSearchesList: React.FC<SavedSearchesListProps> = ({
   onLoadSearch,
-  currentFilters,
 }) => {
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);

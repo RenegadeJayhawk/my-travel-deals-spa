@@ -5,6 +5,14 @@ import { DealCard } from '../DealCard';
 import { SavedDealsService } from '../../services/savedDeals';
 import { createMockDeal } from '../../test/utils';
 
+vi.mock('../../context/CompareContext', () => ({
+  useCompareSelection: () => ({
+    selectedDealIds: [],
+    toggleCompare: vi.fn(),
+    isMaxSelected: false,
+  })
+}));
+
 // Mock SavedDealsService
 vi.mock('../../services/savedDeals', () => ({
   SavedDealsService: {

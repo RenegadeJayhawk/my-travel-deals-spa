@@ -65,8 +65,8 @@ export class AlertCheckerService {
       
       // Check deal type if specified
       if (alert.dealType && alert.dealType !== '') {
-        const dealTypeMatch = deal.deal_type === alert.dealType;
-        if (!dealTypeMatch) return false;
+        const matchType = !alert.dealType || alert.dealType === deal.dealType;
+        if (!matchType) return false;
       }
       
       return true;

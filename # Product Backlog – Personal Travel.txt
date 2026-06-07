@@ -1,0 +1,89 @@
+# Product Backlog – Personal Travel Deals SPA
+
+## [M0] Project Foundations
+
+- [P0][M0] Setup GitHub repo and initialize React (Vite+TS) project.
+- [P0][M0] Configure Cloudflare Pages deployment and verify initial deploy.
+- [P0][M0] Add ESLint + Prettier + jsx-a11y plugin.
+- [P0][M0] Implement base layout with header/nav/main/footer and React Router routes: `/`, `/saved`, `/settings`.
+
+## [M1] Data Models & Local Storage Foundations
+
+- [P0][M1] Define TypeScript types: UserPreferences, SearchCriteria, Deal, SavedDeal, DefaultSearchMetadata.
+- [P0][M1] Implement localStorage utility with typed get/set and JSON parse/stringify.
+- [P0][M1] Define constants for localStorage keys (preferences, saved deals, default search, daily run).
+- [P0][M1] Implement basic state hooks: usePreferences, useSavedDeals, useDefaultSearch.
+
+## [M2] Preferences & Settings
+
+- [P0][M2] Build Preferences form UI (home airports, typical trip length, budget, min hotel rating, trip type).
+- [P0][M2] Wire Preferences form to usePreferences hook and localStorage.
+- [P0][M2] Add validation & error messaging for Preferences form.
+- [P0][M2] Add "Clear all local data" button in Settings page that clears all known localStorage keys.
+- [P1][M2] Add short Security/Privacy text in Settings describing local-only storage.
+
+## [M3] Search Core
+
+- [P0][M3] Implement useSearchCriteria hook initialized from UserPreferences.
+- [P0][M3] Build Search form UI on `/` using useSearchCriteria (trip type, origins, destinations/anywhere, dates, budget, rating, travelers).
+- [P0][M3] Add client-side validation for Search form (date validity, numeric ranges, required fields).
+- [P0][M3] Implement searchService abstraction with search(criteria): Promise<Deal[]> and a mock implementation returning fake deals.
+- [P0][M3] Wire Search form submit to searchService and store results in component state.
+- [P1][M3] Integrate a data-fetching library (e.g., React Query) for search lifecycle (loading, error, caching).
+
+## [M4] Results Listing & Scoring
+
+- [P0][M4] Implement calculateDealScore(deal) helper with initial heuristic (price, rating, duration).
+- [P0][M4] Create DealCard component showing core info (destination, dates, price, rating, flight summary).
+- [P0][M4] Create DealsList component to render search results and accept callbacks (onSave, onToggleCompare).
+- [P1][M4] Add sort controls above results (by total price, price per night, rating, dealScore).
+- [P1][M4] Add filter controls (price range, rating, non-stop toggle) with client-side filtering.
+- [P1][M4] Implement empty-state UI for no results.
+- [P1][M4] Implement error-state UI for search failures.
+
+## [M5] Saved Deals
+
+- [P0][M5] Extend useSavedDeals hook with saveDeal, unsaveDeal, isDealSaved.
+- [P0][M5] Add Save/Unsave button to DealCard wired to useSavedDeals (with a11y labels and toast feedback).
+- [P0][M5] Implement `/saved` page listing SavedDeal entries using DealCard or variant.
+- [P1][M5] Add sort & filter to Saved Deals page (destination, date, price, dealScore).
+- [P1][M5] Handle empty Saved Deals state with guidance text.
+
+## [M6] Comparison
+
+- [P1][M6] Implement global useCompareSelection hook managing selected deal IDs and enforcement of max selection.
+- [P1][M6] Add Compare checkbox/toggle to DealCard linked to useCompareSelection.
+- [P1][M6] Implement CompareBar component (sticky) showing selected deals count and “Compare now” button.
+- [P1][M6] Implement Comparison view (modal or `/compare` route) with table layout (columns=deals, rows=attributes).
+- [P1][M6] Highlight best values per row in Comparison view (using icons/text + color).
+- [P1][M6] Ensure Comparison view is keyboard accessible and returns focus to triggering element on close.
+
+## [M7] Default Search & Soft Daily Run
+
+- [P1][M7] Add “Save as default search” action on Search page that persists current SearchCriteria.
+- [P1][M7] In Settings, display current default search summary and provide actions to clear or update it.
+- [P1][M7] Implement daily-run logic: on app load, check lastRunDate vs today and auto-run default search if needed, caching results.
+- [P1][M7] Store last default search results summary (e.g., top N deals) in localStorage.
+- [P1][M7] Implement “Today’s best result” widget on `/` showing latest default search run and top deal(s).
+
+## [M8] Accessibility & Security
+
+- [P0][M8] Ensure base layout uses semantic HTML: header/nav/main/footer.
+- [P0][M8] Add “Skip to main content” link visible on keyboard focus.
+- [P0][M8] Verify all interactive elements are reachable with keyboard and have visible focus styles.
+- [P1][M8] Implement accessible modal/dialog behavior (focus trap, Escape to close, return focus).
+- [P1][M8] Add labels or aria-label for all form inputs; associate error messages with aria-describedby.
+- [P1][M8] Use table semantics (th, scope) for Comparison view.
+- [P1][M8] Add aria-live region to announce search completion and result counts.
+- [P1][M8] Ensure color contrast meets WCAG 2.1 AA for text and key UI elements.
+- [P1][M8] Add basic CSP and security-related meta tags to index.html (CSP, Referrer-Policy, X-Content-Type-Options, frame-ancestors).
+- [P1][M8] Configure ESLint to forbid eval/new Function and highlight potential security smells.
+
+## [M9] Additional Testing & QA
+
+- [P0][M9] Write component tests for core layouts and missing components (Home, App, DealsGrid).
+- [P0][M9] Write component tests for all interactive elements (SearchBar, SortDropdown, AlertNotifications).
+- [P0][M9] Write component tests for modals ensuring accessibility and validation (CreateAlertModal, SaveSearchModal).
+- [P1][M9] Implement error-handling tests for LocalStorage failures in priceAlerts service and complex URL parsing in urlState.
+- [P1][M9] Integrate E2E testing framework (e.g. Playwright) for critical user journeys.
+- [P2][M9] Automate DOM accessibility audits (e.g. jest-axe) within Vitest suite.

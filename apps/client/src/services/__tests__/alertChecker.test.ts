@@ -5,20 +5,16 @@ import { TravelDeal } from '../../types/deals';
 
 describe('AlertCheckerService', () => {
   // Sample deals for testing
-  const mockDeals: TravelDeal[] = [
+  const mockDeals = [
     {
       id: 'deal1',
       title: 'Paris City Break',
       destination: 'Paris',
       origin: 'New York',
       price: 899,
-      quality_score: 85,
-      deal_type: 'package',
-      travel_start_date: '2026-03-01',
-      travel_end_date: '2026-03-07',
-      booking_url: 'https://example.com/deal1',
-      image_url: 'https://example.com/paris.jpg',
-      description: 'Amazing Paris deal',
+      qualityScore: 85,
+      dealType: 'package',
+      travelDates: { start: '2026-03-01', end: '2026-03-07' }
     },
     {
       id: 'deal2',
@@ -26,13 +22,9 @@ describe('AlertCheckerService', () => {
       destination: 'Tokyo',
       origin: 'Los Angeles',
       price: 1299,
-      quality_score: 90,
-      deal_type: 'flight',
-      travel_start_date: '2026-04-01',
-      travel_end_date: '2026-04-10',
-      booking_url: 'https://example.com/deal2',
-      image_url: 'https://example.com/tokyo.jpg',
-      description: 'Explore Tokyo',
+      qualityScore: 90,
+      dealType: 'flight',
+      travelDates: { start: '2026-04-01', end: '2026-04-10' }
     },
     {
       id: 'deal3',
@@ -40,15 +32,11 @@ describe('AlertCheckerService', () => {
       destination: 'Cancun',
       origin: 'Miami',
       price: 799,
-      quality_score: 88,
-      deal_type: 'package',
-      travel_start_date: '2026-05-01',
-      travel_end_date: '2026-05-07',
-      booking_url: 'https://example.com/deal3',
-      image_url: 'https://example.com/cancun.jpg',
-      description: 'Beach paradise',
+      qualityScore: 88,
+      dealType: 'package',
+      travelDates: { start: '2026-05-01', end: '2026-05-07' }
     },
-  ];
+  ] as any as TravelDeal[];
 
   beforeEach(() => {
     localStorage.clear();
@@ -101,7 +89,7 @@ describe('AlertCheckerService', () => {
 
     it('should only check active alerts', () => {
       const alert1 = PriceAlertsService.create('Paris', 1000);
-      const alert2 = PriceAlertsService.create('Cancun', 1000);
+      PriceAlertsService.create('Cancun', 1000);
       
       PriceAlertsService.toggleActive(alert1.id); // Pause Paris alert
 
@@ -181,7 +169,7 @@ describe('AlertCheckerService', () => {
     });
 
     it('should not create duplicate notifications for already triggered alerts', () => {
-      const alert = PriceAlertsService.create('Paris', 1000);
+      PriceAlertsService.create('Paris', 1000);
       
       // First check - should create notification
       AlertCheckerService.checkAlerts(mockDeals);
@@ -250,7 +238,7 @@ describe('AlertCheckerService', () => {
 
     it('should only count active alerts', () => {
       const alert1 = PriceAlertsService.create('Paris', 1000);
-      const alert2 = PriceAlertsService.create('Cancun', 1000);
+      PriceAlertsService.create('Cancun', 1000);
       
       PriceAlertsService.toggleActive(alert1.id);
 

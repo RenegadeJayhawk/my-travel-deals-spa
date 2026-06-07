@@ -1,6 +1,6 @@
 import type { DealsResponse } from '../types/deals';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:8787';
 
 export class ApiError extends Error {
   constructor(

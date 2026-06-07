@@ -1,4 +1,4 @@
-import { expect, afterEach, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
@@ -43,7 +43,7 @@ if (!navigator.clipboard) {
 }
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
+globalThis.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -54,7 +54,7 @@ global.IntersectionObserver = class IntersectionObserver {
 } as any;
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
+globalThis.ResizeObserver = class ResizeObserver {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -62,11 +62,11 @@ global.ResizeObserver = class ResizeObserver {
 } as any;
 
 // Mock fetch for API calls
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 // Helper to mock successful fetch responses
 export function mockFetchSuccess(data: any) {
-  (global.fetch as any).mockResolvedValueOnce({
+  (globalThis.fetch as any).mockResolvedValueOnce({
     ok: true,
     json: async () => data,
     status: 200,
@@ -75,7 +75,7 @@ export function mockFetchSuccess(data: any) {
 
 // Helper to mock failed fetch responses
 export function mockFetchError(status: number = 500, message: string = 'Server Error') {
-  (global.fetch as any).mockResolvedValueOnce({
+  (globalThis.fetch as any).mockResolvedValueOnce({
     ok: false,
     status,
     statusText: message,

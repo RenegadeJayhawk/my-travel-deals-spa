@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { TravelDeal } from '../types/deals';
 import { SavedDealsService } from '../services/savedDeals';
+import { useCompareSelection } from '../context/CompareContext';
 
 interface DealCardProps {
   deal: TravelDeal;
@@ -8,6 +9,8 @@ interface DealCardProps {
 
 export function DealCard({ deal }: DealCardProps) {
   const [isSaved, setIsSaved] = useState(false);
+  const { selectedDealIds, toggleCompare, isMaxSelected } = useCompareSelection();
+  const isCompared = selectedDealIds.includes(deal.id);
 
   useEffect(() => {
     setIsSaved(SavedDealsService.isSaved(deal.id));
@@ -102,14 +105,26 @@ export function DealCard({ deal }: DealCardProps) {
             <span className="deal-card-currency">per person</span>
           </div>
 
-          <a
-            href={deal.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="deal-card-button"
-          >
-            View Deal
-          </a>
+          <div className="deal-card-actions">
+            <label className="deal-card-compare-label">
+              <input
+                type="checkbox"
+                checked={isCompared}
+                onChange={() => toggleCompare(deal)}
+                disabled={!isCompared && isMaxSelected}
+                aria-label={`Compare ${deal.title}`}
+              />
+              Compare
+            </label>
+            <a
+              href={deal.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="deal-card-button"
+            >
+              View Deal
+            </a>
+          </div>
         </div>
 
         <div className="deal-card-meta">

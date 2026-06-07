@@ -49,9 +49,9 @@ export function DealsGrid({ filters }: DealsGridProps) {
             case 'price-desc':
               return b.price - a.price;
             case 'quality-desc':
-              return b.quality_score - a.quality_score;
+              return b.qualityScore - a.qualityScore;
             case 'date-asc':
-              return new Date(a.travel_start_date).getTime() - new Date(b.travel_start_date).getTime();
+              return new Date(a.travelDates.start).getTime() - new Date(b.travelDates.start).getTime();
             default:
               return 0;
           }
