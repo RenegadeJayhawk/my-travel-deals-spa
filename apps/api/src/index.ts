@@ -6,6 +6,8 @@ import { DatabaseService } from './services/databaseService'
 // Define environment bindings
 type Bindings = {
   DB: D1Database
+  AMADEUS_API_KEY: string
+  AMADEUS_API_SECRET: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -47,7 +49,7 @@ app.get('/api/deals', async (c) => {
       const dbService = new DatabaseService(c.env.DB)
       response = await dbService.getDeals(filters, pageNum, pageSizeNum)
     } else {
-      const mockService = new TravelApiService()
+      const mockService = new TravelApiService(c.env.AMADEUS_API_KEY, c.env.AMADEUS_API_SECRET)
       response = await mockService.getDeals(filters, pageNum, pageSizeNum)
     }
 
@@ -69,7 +71,7 @@ app.get('/api/deals/:id', async (c) => {
       const dbService = new DatabaseService(c.env.DB)
       deal = await dbService.getDealById(id)
     } else {
-      const mockService = new TravelApiService()
+      const mockService = new TravelApiService(c.env.AMADEUS_API_KEY, c.env.AMADEUS_API_SECRET)
       deal = await mockService.getDealById(id)
     }
 

@@ -80,74 +80,144 @@ const mockDeals: TravelDeal[] = [
  * In production, replace with real API integration (Amadeus, Skyscanner, etc.)
  */
 export class TravelApiService {
-  /**
-   * Fetch travel deals with optional filtering
-   * @param filters - Optional filters to apply to the deals
-   * @param page - Page number for pagination
-   * @param pageSize - Number of deals per page
-   * @returns Promise with deals response
-   */
+  private apiKey: string;
+  private apiSecret: string;
+  private token: string | null = null;
+  private tokenExpiry: number = 0;
+
+  constructor(apiKey?: string, apiSecret?: string) {
+    this.apiKey = apiKey || '';
+    this.apiSecret = apiSecret || '';
+  }
+
+  private async getAccessToken(): Promise<string> {
+    if (this.token && Date.now() < this.tokenExpiry) {
+      return this.token;
+    }
+
+    if (!this.apiKey || !this.apiSecret || this.apiKey === 'your_amadeus_api_key_here') {
+      throw new Error('Missing or invalid Amadeus API keys');
+    }
+
+    const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=client_credentials&client_id=${this.apiKey}&client_secret=${this.apiSecret}`
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to authenticate with Amadeus');
+    }
+
+    const data = await response.json();
+    this.token = data.access_token;
+    this.tokenExpiry = Date.now() + (data.expires_in * 1000) - 5000;
+    return this.token;
+  }
+
   async getDeals(
     filters?: DealsFilter,
     page = 1,
     pageSize = 20
   ): Promise<DealsResponse> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    try {
+      const token = await this.getAccessToken();
+      
+      const originCode = 'NYC'; 
+      const destCode = 'PAR';
+      const date = '2026-06-15';
+      
+      const response = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originCode}&destinationLocationCode=${destCode}&departureDate=${date}&adults=1&max=5`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
 
-    let filteredDeals = [...mockDeals]
+      if (!response.ok) {
+        throw new Error('Failed to fetch from Amadeus');
+      }
 
-    // Apply filters
-    if (filters) {
-      if (filters.destination) {
-        filteredDeals = filteredDeals.filter((deal) =>
-          deal.destination.toLowerCase().includes(filters.destination!.toLowerCase())
-        )
-      }
-      if (filters.origin) {
-        filteredDeals = filteredDeals.filter((deal) =>
-          deal.origin.toLowerCase().includes(filters.origin!.toLowerCase())
-        )
-      }
-      if (filters.minPrice !== undefined) {
-        filteredDeals = filteredDeals.filter((deal) => deal.price >= filters.minPrice!)
-      }
-      if (filters.maxPrice !== undefined) {
-        filteredDeals = filteredDeals.filter((deal) => deal.price <= filters.maxPrice!)
-      }
-      if (filters.dealType) {
-        filteredDeals = filteredDeals.filter((deal) => deal.dealType === filters.dealType)
-      }
-      if (filters.providerType) {
-        filteredDeals = filteredDeals.filter(
-          (deal) => deal.providerType === filters.providerType
-        )
-      }
-    }
+      const data = await response.json();
+      
+      const realDeals: TravelDeal[] = data.data.map((offer: any, index: number) => ({
+        id: `amadeus-${offer.id}`,
+        title: `Flight to Paris`,
+        destination: 'Paris, France',
+        origin: 'New York, NY',
+        price: parseFloat(offer.price.total),
+        originalPrice: parseFloat(offer.price.total) + 150,
+        currency: offer.price.currency,
+        travelDates: {
+          start: date,
+          end: date,
+        },
+        bookingDeadline: '2026-06-01',
+        dealType: 'flight',
+        provider: offer.validatingAirlineCodes[0] || 'Airline',
+        providerType: 'airline',
+        qualityScore: 85 + index,
+        inclusions: ['Flight'],
+        restrictions: ['Non-refundable'],
+        url: 'https://example.com/book',
+        imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }));
 
-    // Pagination
-    const startIndex = (page - 1) * pageSize
-    const endIndex = startIndex + pageSize
-    const paginatedDeals = filteredDeals.slice(startIndex, endIndex)
+      const startIndex = (page - 1) * pageSize;
+      const paginatedDeals = realDeals.slice(startIndex, startIndex + pageSize);
 
-    return {
-      deals: paginatedDeals,
-      total: filteredDeals.length,
-      page,
-      pageSize,
+      return {
+        deals: paginatedDeals,
+        total: realDeals.length,
+        page,
+        pageSize,
+      }
+    } catch (error) {
+      console.log('Falling back to mock data:', (error as Error).message);
+      
+      let filteredDeals = [...mockDeals];
+
+      if (filters) {
+        if (filters.destination) {
+          filteredDeals = filteredDeals.filter((deal) =>
+            deal.destination.toLowerCase().includes(filters.destination!.toLowerCase())
+          )
+        }
+        if (filters.origin) {
+          filteredDeals = filteredDeals.filter((deal) =>
+            deal.origin.toLowerCase().includes(filters.origin!.toLowerCase())
+          )
+        }
+        if (filters.minPrice !== undefined) {
+          filteredDeals = filteredDeals.filter((deal) => deal.price >= filters.minPrice!)
+        }
+        if (filters.maxPrice !== undefined) {
+          filteredDeals = filteredDeals.filter((deal) => deal.price <= filters.maxPrice!)
+        }
+        if (filters.dealType) {
+          filteredDeals = filteredDeals.filter((deal) => deal.dealType === filters.dealType)
+        }
+        if (filters.providerType) {
+          filteredDeals = filteredDeals.filter(
+            (deal) => deal.providerType === filters.providerType
+          )
+        }
+      }
+
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedDeals = filteredDeals.slice(startIndex, endIndex);
+
+      return {
+        deals: paginatedDeals,
+        total: filteredDeals.length,
+        page,
+        pageSize,
+      }
     }
   }
 
-  /**
-   * Get a single deal by ID
-   * @param id - Deal ID
-   * @returns Promise with the deal or null if not found
-   */
   async getDealById(id: string): Promise<TravelDeal | null> {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 50))
-
-    const deal = mockDeals.find((d) => d.id === id)
-    return deal || null
+    const deal = mockDeals.find((d) => d.id === id);
+    return deal || null;
   }
 }
